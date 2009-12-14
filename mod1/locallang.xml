@@ -6,9 +6,82 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
+			<label index="headertitle">Subsitewizard of TU Ilmenau</label>
 			<label index="title">Subsitewizard</label>
+			<label index="ssnew">New Subsite</label>
 			<label index="function1">Create a Subsite</label>
 			<label index="function2">Show Subsite Informations</label>
+			<label index="sstitle">Subsite Title</label>
+			<label index="pagetitle">Page Title</label>
+			<label index="navtitle">Navigation Title</label>
+			<label index="parentpid">Parent PID</label>
+			<label index="uplinkpid">Uplink PID</label>
+			<label index="ssheaderimg">Headerimage (optional)</label>
+			<label index="ssfirstuser">First BE User</label>
+			<label index="legend.general">General Subsite Data</label>
+			<label index="legend.contact">Contact information</label>
+			<label index="legend.presence">Presence Information</label>
+			<label index="presenceleader">Presence Leader</label>
+			<label index="runtime">Runtime</label>
+			<label index="accounts">Accounts</label>
+			<label index="contact.name">Contact Name</label>
+			<label index="contact.email">Contact Email</label>
+			<label index="contact.phone">Contact Phone</label>
+			<label index="sssubmit">Create Subsite</label>
+			<label index="comment">Comment</label>
+			<label index="subsites.uid">ID</label>
+			<label index="subsites.title">Title</label>
+			<label index="subsites.parentpid">Parent PID</label>
+			<label index="subsites.uplinkpid">Uplink PID</label>
+			<label index="subsites.headerimage">Headerimage</label>
+			<label index="subsites.contact">Contact</label>
+			<label index="subsites.comment">Comment</label>
+			<label index="subsites.info">Info</label>
+			<label index="errors.submiterror">ERROR: Data not complete!</label>
+			<label index="errors.notitle">Please fill out Title</label>
+			<label index="errors.nopagetitle">Please fill out Pagetitle</label>
+			<label index="errors.nonavtitle">Please fill out Navigation Title</label>
+			<label index="errors.noparentpid">Please fill out Parent PID</label>
+			<label index="errors.nouplinkpid">Please fill out Uplink PID</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="headertitle">Subsitewizard der TU Ilmenau</label>
+			<label index="title">Subsite Wizard</label>
+			<label index="ssnew">Neue Präsenz (Subsite)</label>
+			<label index="function1">Subsite erstellen</label>
+			<label index="function2">Zeige Präsenz Informationen</label>
+			<label index="sstitle">Subsite Titel</label>
+			<label index="pagetitle">Seitentitel</label>
+			<label index="navtitle">Navigationstitel</label>
+			<label index="parentpid">Elternseite PID</label>
+			<label index="uplinkpid">Uplink Seite PID</label>
+			<label index="ssheaderimg">Headerbild (optional)</label>
+			<label index="ssfirstuser">Erster BE User</label>
+			<label index="legend.general">Allgemein</label>
+			<label index="legend.contact">Kontakt Information</label>
+			<label index="legend.presence">Präsenz Information</label>
+			<label index="presenceleader">Präsenz-Verantwortlicher</label>
+			<label index="runtime">Laufzeit</label>
+			<label index="accounts">Kostenstelle</label>
+			<label index="contact.name">Kontakt Name</label>
+			<label index="contact.email">Kontakt E-Mail</label>
+			<label index="contact.phone">Kontakt Telefon</label>
+			<label index="sssubmit">Subsite anlegen</label>
+			<label index="comment">Kommentar</label>
+			<label index="subsites.uid">ID</label>
+			<label index="subsites.title">Titel</label>
+			<label index="subsites.parentpid">Elternseite PID</label>
+			<label index="subsites.uplinkpid">Uplink Seite PID</label>
+			<label index="subsites.headerimage">Headerbild</label>
+			<label index="subsites.contact">Kontakt</label>
+			<label index="subsites.comment">Kommentar</label>
+			<label index="subsites.info">Info</label>
+			<label index="errors.submiterror">FEHLER: Daten sind unvollständig!</label>
+			<label index="errors.notitle">Bitte den Titel aufüllen.</label>
+			<label index="errors.nopagetitle">Bitte den Seitentitle aufüllen.</label>
+			<label index="errors.nonavtitle">Bitte den Navigationtitel aufüllen.</label>
+			<label index="errors.noparentpid">Bitte den Elternseiten-PID aufüllen.</label>
+			<label index="errors.nouplinkpid">Bitte den Uplink-PID aufüllen.</label>
 		</languageKey>
 	</data>
 </T3locallang>

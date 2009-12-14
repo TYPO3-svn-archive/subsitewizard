@@ -23,13 +23,13 @@ $EM_CONF[$_EXTKEY] = array(
 	'module' => '',
 	'state' => 'alpha',
 	'internal' => '',
-	'uploadfolder' => 1,
+	'uploadfolder' => 0,
 	'createDirs' => '',
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
 	'author_company' => '',
-	'version' => '0.0.0',
+	'version' => '0.5.0',
 	'constraints' => array(
 		'depends' => array(
 		),
