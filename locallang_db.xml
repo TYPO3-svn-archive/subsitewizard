@@ -10,6 +10,7 @@
 			<label index="tx_subsitewizard_subsites.title">title</label>
 			<label index="tx_subsitewizard_subsites.parentpid">parentPID</label>
 			<label index="tx_subsitewizard_subsites.uplinkpid">uplinkPID</label>
+			<label index="tx_subsitewizard_subsites.headerimage">headerimage</label>
 			<label index="tx_subsitewizard_subsites.contact">contact</label>
 			<label index="tx_subsitewizard_subsites.contactmail">contactmail</label>
 			<label index="tx_subsitewizard_subsites.contactphone">contactphone</label>

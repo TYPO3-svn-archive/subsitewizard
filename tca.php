@@ -4,7 +4,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 $TCA['tx_subsitewizard_subsites'] = array (
 	'ctrl' => $TCA['tx_subsitewizard_subsites']['ctrl'],
 	'interface' => array (
-		'showRecordFieldList' => 'hidden,title,parentpid,uplinkpid,contact,contactmail,contactphone,comment,kostenstelle,praesenzverantwortlicher,laufzeit'
+		'showRecordFieldList' => 'hidden,title,parentpid,uplinkpid,headerimage,contact,contactmail,contactphone,comment,kostenstelle,praesenzverantwortlicher,laufzeit'
 	),
 	'feInterface' => $TCA['tx_subsitewizard_subsites']['feInterface'],
 	'columns' => array (
@@ -28,16 +28,39 @@ $TCA['tx_subsitewizard_subsites'] = array (
 			'exclude' => 0,		
 			'label' => 'LLL:EXT:subsitewizard/locallang_db.xml:tx_subsitewizard_subsites.parentpid',		
 			'config' => array (
-				'type' => 'input',	
-				'size' => '30',
+				'type' => 'group',	
+				'internal_type' => 'db',	
+				'allowed' => 'pages',	
+				'size' => 1,	
+				'minitems' => 0,
+				'maxitems' => 1,
 			)
 		),
 		'uplinkpid' => array (		
 			'exclude' => 0,		
 			'label' => 'LLL:EXT:subsitewizard/locallang_db.xml:tx_subsitewizard_subsites.uplinkpid',		
 			'config' => array (
-				'type' => 'input',	
-				'size' => '30',
+				'type' => 'group',	
+				'internal_type' => 'db',	
+				'allowed' => 'pages',	
+				'size' => 1,	
+				'minitems' => 0,
+				'maxitems' => 1,
+			)
+		),
+		'headerimage' => array (		
+			'exclude' => 0,		
+			'label' => 'LLL:EXT:subsitewizard/locallang_db.xml:tx_subsitewizard_subsites.headerimage',		
+			'config' => array (
+				'type' => 'group',
+				'internal_type' => 'file',
+				'allowed' => $GLOBALS['TYPO3_CONF_VARS']['GFX']['imagefile_ext'],	
+				'max_size' => $GLOBALS['TYPO3_CONF_VARS']['BE']['maxFileSize'],	
+				'uploadfolder' => 'uploads/tx_subsitewizard',
+				'show_thumbs' => 1,	
+				'size' => 1,	
+				'minitems' => 0,
+				'maxitems' => 1,
 			)
 		),
 		'contact' => array (		
@@ -99,7 +122,7 @@ $TCA['tx_subsitewizard_subsites'] = array (
 		),
 	),
 	'types' => array (
-		'0' => array('showitem' => 'hidden;;1;;1-1-1, title;;;;2-2-2, parentpid;;;;3-3-3, uplinkpid, contact, contactmail, contactphone, comment, kostenstelle, praesenzverantwortlicher, laufzeit')
+		'0' => array('showitem' => 'hidden;;1;;1-1-1, title;;;;2-2-2, parentpid;;;;3-3-3, uplinkpid, headerimage, contact, contactmail, contactphone, comment, kostenstelle, praesenzverantwortlicher, laufzeit')
 	),
 	'palettes' => array (
 		'1' => array('showitem' => '')
