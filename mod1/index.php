@@ -72,7 +72,6 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 						'function' => Array (
 							'1' => $LANG->getLL('function1'),
 							'2' => $LANG->getLL('function2'),
-							'3' => $LANG->getLL('function3'),
 						)
 					);
 					parent::menuConfig();
@@ -91,7 +90,7 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 					// The page will show only if there is a valid page and if this page may be viewed by the user
 					$this->pageinfo = t3lib_BEfunc::readPageAccess($this->id,$this->perms_clause);
 					$access = is_array($this->pageinfo) ? 1 : 0;
-				
+
 						// initialize doc
 					$this->doc = t3lib_div::makeInstance('template');
 					$this->doc->setModuleTemplate(t3lib_extMgm::extPath('subsitewizard') . 'mod1//mod_template.html');
@@ -101,7 +100,7 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 					if (($this->id && $access) || ($BE_USER->user['admin'] && !$this->id))	{
 
 							// Draw the form
-						$this->doc->form = '<form action="" method="post" enctype="multipart/form-data">';
+						$this->doc->form = '<form action="" method="post" enctype="multipart/form-data" name="sswizardform" id="sswizardform">';
 
 							// JavaScript
 						$this->doc->JScode = '
@@ -110,6 +109,17 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 								function jumpToUrl(URL)	{
 									document.location = URL;
 								}
+								var browserWin="";
+
+
+						function setFormValueFromBrowseWin(fName,value,label,exclusiveValues)	{	//
+							//alert(fName+"\n"+value+"\n"+label+"\n"+exclusiveValues);
+							el = value.split("_");
+							id = el[el.length - 1];
+							fObj=document.getElementById("sswizardform");
+							fObj[fName].value = id;
+						}
+
 							</script>
 						';
 						$this->doc->postCode='
@@ -117,6 +127,11 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 								script_ended = 1;
 								if (top.fsMod) top.fsMod.recentIds["web"] = 0;
 							</script>
+						';
+
+						$this->doc->inDocStyles = '
+							.subsitewizard label {float:left; width: 120px;}
+							.subsitewizard p {clear: left;padding: 4px 10px;}
 						';
 							// Render content:
 						$this->moduleContent();
@@ -135,7 +150,7 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 					$this->content.= $this->doc->moduleBody($this->pageinfo, $docHeaderButtons, $markers);
 					$this->content.= $this->doc->endPage();
 					$this->content = $this->doc->insertStylesAndJS($this->content);
-				
+
 				}
 
 				/**
@@ -157,14 +172,8 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 				function moduleContent()	{
 					switch((string)$this->MOD_SETTINGS['function'])	{
 						case 1:
-							$content='<div align="center"><strong>Hello World!</strong></div><br />
-								The "Kickstarter" has made this module automatically, it contains a default framework for a backend module but apart from that it does nothing useful until you open the script '.substr(t3lib_extMgm::extPath('subsitewizard'),strlen(PATH_site)).'mod1/index.php and edit it!
-								<hr />
-								<br />This is the GET/POST vars sent to the script:<br />'.
-								'GET:'.t3lib_div::view_array($_GET).'<br />'.
-								'POST:'.t3lib_div::view_array($_POST).'<br />'.
-								'';
-							$this->content.=$this->doc->section('Message #1:',$content,0,1);
+							$content = $this->getSubsiteWizardForm();
+							$this->content.=$this->doc->section('New Subsite:',$content,0,1);
 						break;
 						case 2:
 							$content='<div align=center><strong>Menu item #2...</strong></div>';
@@ -176,8 +185,96 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 						break;
 					}
 				}
-				
 
+				/**
+				 * Hets the form
+				 */
+				protected function getSubsiteWizardForm() {
+
+					$form = '
+					<fieldset class="subsitewizard">
+						<legend>General Informations</legend>
+						<p>
+							<label for="sstitle">*Subsite Title:</label>
+							<input type="text" id="sstitle" name="sstitle" value="" size="60" />
+						</p>
+						<p>
+							<label for="ssptitle">*Page Title:</label>
+							<input type="text" id="ssptitle" name="ssptitle" value="" size="60" />
+						</p>
+						<p>
+							<label for="ssnavtitle">*Navigation Title:</label>
+							<input type="text" id="ssnavtitle" name="ssnavtitle" value="" size="60" />
+						</p>
+						<p>
+							<label for="ssparentpid">*Parent PID:</label>
+							<input type="text" id="ssparentpid" name="ssparentpid" value="" size="10" />&nbsp;' . $this->browseLinksIcon('ssparentpid') . '
+						</p>
+						<p>
+							<label for="ssuplinkpid">*Uplink PID:</label>
+							<input type="text" id="ssuplinkpid" name="ssuplinkpid" value="" size="10" />&nbsp;' . $this->browseLinksIcon('ssuplinkpid') . '
+						</p>
+						<p>
+							<label for="ssheaderimg">Header Image (optional):</label>
+							<input type="text" id="ssheaderimg" name="ssheaderimg" value="" size="60" />&nbsp;' . $this->browseLinksIcon('ssheaderimg', 'file', 'gif,jpg,jpeg,tif,bmp,pcx,tga,png') . '
+						</p>
+						<p>
+							<label for="firstbeuser">Erster BE Benutzer:</label>
+							<input type="text" id="firstbeuser" name="firstbeuser" value="" size="10" />&nbsp;' . $this->browseLinksIcon('firstbeuser', 'page', 'be_users', 'db') . '
+						</p>
+					</fieldset>
+					<fieldset class="subsitewizard">
+						<legend>Kontakt Informationen</legend>
+						<p>
+							<label for="sscontact">Kontakt Name:</label>
+							<input type="text" id="sscontact" name="sscontact" value="" size="60" />
+						</p>
+						<p>
+							<label for="sscontactmail">Kontakt E-Mail:</label>
+							<input type="text" id="sscontactmail" name="sscontactmail" value="" size="60" />
+						</p>
+						<p>
+							<label for="sscomment">Kommentar:</label>
+							<textarea id="sscomment" name="sscomment" rows="7" cols="60"></textarea>
+						</p>
+
+					</fieldset>
+					<fieldset class="subsitewizard">
+						<legend>Praesenz Informationen</legend>
+						<p>
+							<label for="ssverantwortlicher">Verantwortlicher:</label>
+							<input type="text" id="ssverantwortlicher" name="ssverantwortlicher" value="" size="60" />
+						</p>
+						<p>
+							<label for="sslaufzeit">Laufzeit:</label>
+							<input type="text" id="sslaufzeit" name="sslaufzeit" value="" size="60" />
+						</p>
+						<p>
+							<label for="sskostenstelle">Kostenstelle:</label>
+							<input type="text" id="sskostenstelle" name="sskostenstelle" value="" size="60" />
+						</p>
+					</fieldset>
+					<p>
+						<input type="submit" name="sscreatesubsite" id="sscreatesubsite" value="Subsite anlegen" />
+					</p>
+					';
+
+					return $form;
+				}
+
+				protected function browseLinksIcon($fieldName,$tabs = "page", $bParams = '', $mode='wizard') {
+					$uid = uniqid('popUpID');
+					$allTabs = 'page,file,folder,url,mail,spec';
+					$blindLinkOptions = t3lib_div::rmFromList($tabs, $allTabs);
+					if ($bParams) {
+						$bp = '&bparams=' . $fieldName . '|||' . $bParams . '|';
+					}
+					$aOnClick = 'this.blur(); vHWin=window.open(\'../../../../typo3/browse_links.php?mode=' . $mode . $bp . '&P[field]='. $fieldName .'&P[formName]=sswizardform&P[itemName]='. $fieldName .'&P[params][blindLinkOptions]=' . $blindLinkOptions . '&P[fieldChangeFunc][typo3form.fieldGet]=null&P[fieldChangeFunc][TBE_EDITOR_fieldChanged]=null\',\'' . $uid . '\',\'height=300,width=500,status=0,menubar=0,scrollbars=1\'); vHWin.focus(); return false;';
+					$icon = '<a href="#" onclick="'.htmlspecialchars($aOnClick).'">'.
+						'<img' . t3lib_iconWorks::skinImg($this->backPath, 'gfx/insert3.gif', 'width="14" height="14"') . ' border="0" ' . t3lib_BEfunc::titleAltAttrib('PID') . ' />' .
+						'</a>';
+					return $icon;
+				}
 				/**
 				 * Create the panel of buttons for submitting the form or otherwise perform operations.
 				 *
@@ -204,7 +301,7 @@ class  tx_subsitewizard_module1 extends t3lib_SCbase {
 
 					return $buttons;
 				}
-				
+
 		}
 
 

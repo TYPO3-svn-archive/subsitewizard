@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels for database tables/fields belonging to extension 'subsitewizard'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tx_subsitewizard_subsites">Subsites</label>
+			<label index="tx_subsitewizard_subsites.title">title</label>
+			<label index="tx_subsitewizard_subsites.parentpid">parentPID</label>
+			<label index="tx_subsitewizard_subsites.uplinkpid">uplinkPID</label>
+			<label index="tx_subsitewizard_subsites.contact">contact</label>
+			<label index="tx_subsitewizard_subsites.contactmail">contactmail</label>
+			<label index="tx_subsitewizard_subsites.contactphone">contactphone</label>
+			<label index="tx_subsitewizard_subsites.comment">comment</label>
+			<label index="tx_subsitewizard_subsites.kostenstelle">kostenstelle</label>
+			<label index="tx_subsitewizard_subsites.praesenzverantwortlicher">praesenzverantwortlicher</label>
+			<label index="tx_subsitewizard_subsites.laufzeit">laufzeit</label>
+		</languageKey>
+	</data>
+</T3locallang>
