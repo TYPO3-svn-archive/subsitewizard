@@ -374,20 +374,20 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 			);
 
 				//create folders
-			t3lib_div::mkdir_deep(PATH_site . 'fileadmin/media/' . $alias . ' (media ' . $pageID . ')/');
-			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/public/' . $alias . ' (public ' . $pageID . ')/');
+			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/media/' . $alias . '/');
+			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/public/' . $alias . '/');
 
 				//create filemounts
 			$data['sys_filemounts']['NEW1'] = array (
 				'pid' => 0,
 				'base' => 1,
-				'title' => $alias . ' (' . $pageID . ')',
-				'path' => $alias,
+				'title' => 'media/' . $alias . ' (media ' . $pageID . ')',
+				'path' => 'media/' . $alias,
 			);
 			$data['sys_filemounts']['NEW2'] = array (
 				'pid' => 0,
 				'base' => 1,
-				'title' => $alias . ' (' . $pageID . ')',
+				'title' => 'public/' . $alias . ' (public ' . $pageID . ')',
 				'path' => 'public/' . $alias,
 			);
 
@@ -413,35 +413,25 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 			$temp = $GLOBALS['BE_USER']->getTSConfig('mod.subsitewizard');
 			$modConf = isset($temp['properties']['pageMapping.']) ? $temp['properties']['pageMapping.'] : array();
 
-			$fieldTitle = $modConf['title'] ? $modConf['title'] : 'title';
-			$fieldSubTitle = $modConf['subtitle'] ? $modConf['subtitle'] : 'subtitle';
-			$fieldAlias  = $modConf['alias'] ? $modConf['alias'] : 'navtitle';
-			$fieldMedia  = $modConf['media'] ? $modConf['media'] : 'media';
-			$fieldUplink  = $modConf['uplink'] ? $modConf['uplink'] : 'url';
-			$fieldContact  = $modConf['contact'] ? $modConf['contact'] : 'author';
-			$fieldContactmail  = $modConf['contactmail'] ? $modConf['contactmail'] : 'author_email';
-
+			$defaultMapping = array(
+				'title' => 'title',
+				'subtitle' => 'subtitle',
+				'navtitle' => 'alias',
+				'media' => 'headerimage',
+				'author' => 'contact',
+				'author_email' => 'contactmail'
+			);
+			$mapping = array_merge($defaultMapping, $modConf);
 
 			$data['pages'][$pageID] = array (
 				'pid' => trim(htmlspecialchars($post['ssparentpid'])),
 				'hidden' => 0,
-				$fieldTitle => htmlspecialchars($post['ssptitle']),
-				$fieldSubTitle => htmlspecialchars($post['sstitle']),
-				$fieldAlias => $alias,
-				$fieldMedia => $alias,
-				$fieldUplink => $alias,
-				$fieldContact => $alias,
-				$fieldContactmail => $alias,
-
 			);
 
-				// Access
-			foreach ($createdPages as $pageUid) {
-				$data['pages'][$pageUid]['perms_userid'] = $beuser['uid'];
-				$data['pages'][$pageUid]['perms_groupid'] = 'NEW3';
-				$data['pages'][$pageUid]['perms_user'] = 31;
-				$data['pages'][$pageUid]['perms_group'] = 31;
+			foreach ($mapping as $key => $value) {
+				$data['pages'][$pageID][$key] = $data['tx_subsitewizard_subsites']['NEW0'][$value];
 			}
+
 			$tce->start($data, array());
 			$tce->process_datamap();
 
@@ -449,6 +439,13 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 			$data = array();
 			$newDBGroup = intval($tce->substNEWwithIDs['NEW3']);
 			$data['pages'][$pageID]['TSconfig'] = 'TCEMAIN.permissions.groupid = ' . $newDBGroup;
+				// Access
+			foreach ($createdPages as $pageUid) {
+				$data['pages'][$pageUid]['perms_userid'] = $beuser['uid'];
+				$data['pages'][$pageUid]['perms_groupid'] = $newDBGroup;
+				$data['pages'][$pageUid]['perms_user'] = 31;
+				$data['pages'][$pageUid]['perms_group'] = 31;
+			}
 
 			$tce->start($data, array());
 			$tce->process_datamap();
@@ -541,7 +538,22 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 	protected function getConfiguration() {
 		$temp = $GLOBALS['BE_USER']->getTSConfig('mod.subsitewizard');
 		$modConf = isset($temp['properties']) ? $temp['properties'] : array();
-		return t3lib_div::view_array(array_merge($this->extConf, $modConf));
+		$defaultMapping = array(
+			'title' => 'title',
+			'subtitle' => 'subtitle',
+			'navtitle' => 'alias',
+			'media' => 'headerimage',
+			'author' => 'contact',
+			'author_email' => 'contactmail'
+		);
+		$modConf['pageMapping.'] = array_merge($defaultMapping, $modConf['pageMapping.']);
+
+		$out = '<p>
+		For the mapping use pagerecordfield = subsitewiazardfield.<br />Following fields are available from subsitewizard:<br /><br />
+		title,alias,parentpid,startpid,uplinkpid,contact,contactmail,contactphone,comment,kostenstelle,praesenzverantwortlicher,laufzeit,headerimage
+		<br /><br /></p>';
+		$out .=  t3lib_div::view_array(array_merge($this->extConf, $modConf));
+		return $out;
 	}
 
 	protected function pidCell($pid) {
