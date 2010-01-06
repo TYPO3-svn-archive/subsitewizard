@@ -68,7 +68,13 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 	 */
 	function menuConfig() {
 		global $LANG;
-		$this->MOD_MENU = Array ('function' => Array ('1' => $LANG->getLL('function1'), '2' => $LANG->getLL('function2')));
+		$this->MOD_MENU = array (
+			'function' => array (
+				'1' => $LANG->getLL('menu_create'),
+				'2' => $LANG->getLL('menu_list'),
+				'3' => $LANG->getLL('menu_conf'),
+			)
+		);
 		parent::menuConfig();
 	}
 
@@ -90,6 +96,10 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 		$this->doc = t3lib_div::makeInstance('template');
 		$this->doc->setModuleTemplate(t3lib_extMgm::extPath('subsitewizard') . 'mod1//mod_template.html');
 		$this->doc->backPath = $BACK_PATH;
+		$this->doc->getContextMenuCode();
+		$this->doc->inDocStyles = '
+
+		';
 		$docHeaderButtons = $this->getButtons();
 
 		if (($this->id && $access) || ($BE_USER->user['admin'] && ! $this->id)) {
@@ -124,12 +134,8 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 							</script>
 						';
 
-			$this->doc->inDocStyles = '
-							.subsitewizard label {float:left; width: 120px;}
-							.subsitewizard p {clear: left;padding: 4px 10px;}
-							.ssheadertitle {color: white; text-weight: bold; font-size: 12px;padding: 2px 6px; }
-							.sserrors {}
-						';
+			$this->doc->styleSheetFile2 = t3lib_extMgm::extRelPath('subsitewizard') . 'mod1/subsitewizard.css';
+
 			// Render content:
 			$this->moduleContent();
 		} else {
@@ -174,7 +180,11 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 			break;
 			case 2 :
 				$content = $this->getSubsitesTable();
-				$this->content .= $this->doc->section('Subsites:', $content, 0, 1);
+				$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('subsites'), $content, 0, 1);
+				break;
+			case 3 :
+				$content = $this->getConfiguration();
+				$this->content .= $this->doc->section($GLOBALS['LANG']->getLL('configuration'), $content, 0, 1);
 				break;
 
 		}
@@ -186,90 +196,106 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 	protected function getSubsiteWizardForm() {
 		$post = t3lib_div::_POST('data');
 		$form = '';
+		$this->validated = FALSE;
+
 		if ($post['sscreatesubsite']) {
 			$form = $this->processSubmit();
 		}
+		if ($this->validated) {
+			return $form;
+		}
 
 		$form .= '
-					<fieldset class="subsitewizard">
-						<legend>' . $GLOBALS['LANG']->getLL('legend.general') . '</legend>
-						<p>
-							<label for="sstitle">*' . $GLOBALS['LANG']->getLL('sstitle') . ':</label>
-							<input type="text" id="sstitle" name="data[sstitle]" value="' . htmlspecialchars($post['sstitle']) . '" size="60" />
-						</p>
-						<p>
-							<label for="ssptitle">*' . $GLOBALS['LANG']->getLL('pagetitle') . ':</label>
-							<input type="text" id="ssptitle" name="data[ssptitle]" value="' . htmlspecialchars($post['ssptitle']) . '" size="60" />
-						</p>
-						<p>
-							<label for="ssnavtitle">*' . $GLOBALS['LANG']->getLL('navtitle') . ':</label>
-							<input type="text" id="ssnavtitle" name="data[ssnavtitle]" value="' . htmlspecialchars($post['ssnavtitle']) . '" size="60" />
-						</p>
-						<p>
-							<label for="ssparentpid">*' . $GLOBALS['LANG']->getLL('parentpid') . ':</label>
-							<input type="text" id="ssparentpid" name="data[ssparentpid]" value="' . htmlspecialchars($post['ssparentpid']) . '" size="10" />&nbsp;' . $this->browseLinksIcon('ssparentpid') . '
-						</p>
-						<p>
-							<label for="ssuplinkpid">*' . $GLOBALS['LANG']->getLL('uplinkpid') . ':</label>
-							<input type="text" id="ssuplinkpid" name="data[ssuplinkpid]" value="' . htmlspecialchars($post['ssuplinkpid']) . '" size="10" />&nbsp;' . $this->browseLinksIcon('ssuplinkpid') . '
-						</p>
-						<p>
-							<label for="ssheaderimg">' . $GLOBALS['LANG']->getLL('ssheaderimg') . ':</label>
-							<input type="text" id="ssheaderimg" name="data[ssheaderimg]" value="' . htmlspecialchars($post['ssheaderimg']) . '" size="60" />&nbsp;' . $this->browseLinksIcon('ssheaderimg', 'file', 'gif,jpg,jpeg,tif,bmp,pcx,tga,png') . '
-						</p>
-						<p>
-							<label for="firstbeuser">' . $GLOBALS['LANG']->getLL('ssfirstuser') . ':</label>
-							<input type="text" id="firstbeuser" name="data[firstbeuser]" value="' . htmlspecialchars($post['firstbeuser']) . '" size="10" />&nbsp;' . $this->browseLinksIcon('firstbeuser', 'page', 'be_users', 'db') . '
-						</p>
-					</fieldset>
-					<fieldset class="subsitewizard">
-						<legend>' . $GLOBALS['LANG']->getLL('legend.contact') . '</legend>
-						<p>
-							<label for="sscontact">' . $GLOBALS['LANG']->getLL('contact.name') . ':</label>
-							<input type="text" id="sscontact" name="data[sscontact]" value="' . htmlspecialchars($post['sscontact']) . '" size="60" />
-						</p>
-						<p>
-							<label for="sscontactmail">' . $GLOBALS['LANG']->getLL('contact.email') . ':</label>
-							<input type="text" id="sscontactmail" name="data[sscontactmail]" value="' . htmlspecialchars($post['sscontactmail']) . '" size="60" />
-						</p>
-						<p>
-							<label for="sscontactphone">' . $GLOBALS['LANG']->getLL('contact.phone') . ':</label>
-							<input type="text" id="sscontactphone" name="data[sscontactphone]" value="' . htmlspecialchars($post['sscontactphone']) . '" size="60" />
-						</p>
-						<p>
-							<label for="sscomment">' . $GLOBALS['LANG']->getLL('comment') . ':</label>
-							<textarea id="sscomment" name="data[sscomment]" rows="7" cols="60">' . htmlspecialchars($post['sscomment']) . '</textarea>
-						</p>
+			<fieldset class="subsitewizard">
+				<legend>' . $GLOBALS['LANG']->getLL('legend.general') . '</legend>
+				<p>
+					<label for="sstitle">*' . $GLOBALS['LANG']->getLL('sstitle') . ':</label>
+					<input type="text" id="sstitle" name="data[sstitle]" value="' . htmlspecialchars($post['sstitle']) . '" size="60" />
+				</p>
+				<p>
+					<label for="ssptitle">*' . $GLOBALS['LANG']->getLL('pagetitle') . ':</label>
+					<input type="text" id="ssptitle" name="data[ssptitle]" value="' . htmlspecialchars($post['ssptitle']) . '" size="60" />
+				</p>
+				<p>
+					<label for="ssnavtitle">*' . $GLOBALS['LANG']->getLL('navtitle') . ':</label>
+					<input type="text" id="ssnavtitle" name="data[ssnavtitle]" value="' . htmlspecialchars($post['ssnavtitle']) . '" size="60" />
+				</p>
+				<p>
+					<label for="ssparentpid">*' . $GLOBALS['LANG']->getLL('parentpid') . ':</label>
+					<input type="text" id="ssparentpid" name="data[ssparentpid]" value="' . htmlspecialchars($post['ssparentpid']) . '" size="10" />&nbsp;' . $this->browseLinksIcon('ssparentpid', 'page', 'pages', 'db') . '
+				</p>
+				<p>
+					<label for="ssuplinkpid">*' . $GLOBALS['LANG']->getLL('uplinkpid') . ':</label>
+					<input type="text" id="ssuplinkpid" name="data[ssuplinkpid]" value="' . htmlspecialchars($post['ssuplinkpid']) . '" size="10" />&nbsp;' . $this->browseLinksIcon('ssuplinkpid', 'page', 'pages', 'db') . '
+				</p>
+				<p>
+					<label for="ssheaderimg">' . $GLOBALS['LANG']->getLL('ssheaderimg') . ':</label>
+					<input type="file" id="ssheaderimg" name="data[ssheaderimg]" value="' . htmlspecialchars($post['ssheaderimg']) . '" size="60" />&nbsp;' . $this->browseLinksIcon('ssheaderimg', 'file', 'gif,jpg,jpeg,tif,bmp,pcx,tga,png') . '
+				</p>
+				<p>
+					<label for="firstbeuser">' . $GLOBALS['LANG']->getLL('ssfirstuser') . ':</label>
+					<input type="text" id="firstbeuser" name="data[firstbeuser]" value="' . htmlspecialchars($post['firstbeuser']) . '" size="10" />&nbsp;' . $this->browseLinksIcon('firstbeuser', 'page', 'be_users', 'db') . '
+				</p>
+			</fieldset>
+			<fieldset class="subsitewizard">
+				<legend>' . $GLOBALS['LANG']->getLL('legend.contact') . '</legend>
+				<p>
+					<label for="sscontact">' . $GLOBALS['LANG']->getLL('contact.name') . ':</label>
+					<input type="text" id="sscontact" name="data[sscontact]" value="' . htmlspecialchars($post['sscontact']) . '" size="60" />
+				</p>
+				<p>
+					<label for="sscontactmail">' . $GLOBALS['LANG']->getLL('contact.email') . ':</label>
+					<input type="text" id="sscontactmail" name="data[sscontactmail]" value="' . htmlspecialchars($post['sscontactmail']) . '" size="60" />
+				</p>
+				<p>
+					<label for="sscontactphone">' . $GLOBALS['LANG']->getLL('contact.phone') . ':</label>
+					<input type="text" id="sscontactphone" name="data[sscontactphone]" value="' . htmlspecialchars($post['sscontactphone']) . '" size="60" />
+				</p>
+				<p>
+					<label for="sscomment">' . $GLOBALS['LANG']->getLL('comment') . ':</label>
+					<textarea id="sscomment" name="data[sscomment]" rows="7" cols="60">' . htmlspecialchars($post['sscomment']) . '</textarea>
+				</p>
 
-					</fieldset>
-					<fieldset class="subsitewizard">
-						<legend>' . $GLOBALS['LANG']->getLL('legend.presence') . '</legend>
-						<p>
-							<label for="ssverantwortlicher">' . $GLOBALS['LANG']->getLL('presenceleader') . ':</label>
-							<input type="text" id="ssverantwortlicher" name="data[ssverantwortlicher]" value="' . htmlspecialchars($post['ssverantwortlicher']) . '" size="60" />
-						</p>
-						<p>
-							<label for="sslaufzeit">' . $GLOBALS['LANG']->getLL('runtime') . ':</label>
-							<input type="text" id="sslaufzeit" name="data[sslaufzeit]" value="' . htmlspecialchars($post['sslaufzeit']) . '" size="60" />
-						</p>
-						<p>
-							<label for="sskostenstelle">' . $GLOBALS['LANG']->getLL('accounts') . ':</label>
-							<input type="text" id="sskostenstelle" name="data[sskostenstelle]" value="' . htmlspecialchars($post['sskostenstelle']) . '" size="60" />
-						</p>
-					</fieldset>
-					<p>
-						<input type="submit" name="data[sscreatesubsite]" id="sscreatesubsite" value="' . $GLOBALS['LANG']->getLL('sssubmit') . '" />
-					</p>
-					';
+			</fieldset>
+			<fieldset class="subsitewizard">
+				<legend>' . $GLOBALS['LANG']->getLL('legend.presence') . '</legend>
+				<p>
+					<label for="ssverantwortlicher">' . $GLOBALS['LANG']->getLL('presenceleader') . ':</label>
+					<input type="text" id="ssverantwortlicher" name="data[ssverantwortlicher]" value="' . htmlspecialchars($post['ssverantwortlicher']) . '" size="60" />
+				</p>
+				<p>
+					<label for="sslaufzeit">' . $GLOBALS['LANG']->getLL('runtime') . ':</label>
+					<input type="text" id="sslaufzeit" name="data[sslaufzeit]" value="' . htmlspecialchars($post['sslaufzeit']) . '" size="60" />
+				</p>
+				<p>
+					<label for="sskostenstelle">' . $GLOBALS['LANG']->getLL('accounts') . ':</label>
+					<input type="text" id="sskostenstelle" name="data[sskostenstelle]" value="' . htmlspecialchars($post['sskostenstelle']) . '" size="60" />
+				</p>
+			</fieldset>
+			<p>
+				<input type="submit" name="data[sscreatesubsite]" id="sscreatesubsite" value="' . $GLOBALS['LANG']->getLL('sssubmit') . '" />
+			</p>
+		';
 
 		return $form;
 	}
 
 	protected function processSubmit() {
 		$post = t3lib_div::_POST('data');
-		$data = array ();
-		$validated = FALSE;
+		$data = $cmd = array ();
+		$this->validated = FALSE;
 		$errors = 0;
+
+		$tce = t3lib_div::makeInstance('t3lib_TCEmain');
+		$tce->stripslashes_values = 0;
+		$tce->reverseOrder = 1;
+		$tce->copyTree = 10;
+
+		// set default TCA values specific for the user
+		$TCAdefaultOverride = $GLOBALS['BE_USER']->getTSConfigProp('TCAdefaults');
+		if (is_array($TCAdefaultOverride)) {
+			$tce->setDefaultsFromUserTS($TCAdefaultOverride);
+		}
 
 		#$out .= t3lib_div::view_array($post);
 
@@ -295,33 +321,17 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 			$errMsg[] = $GLOBALS['LANG']->getLL('errors.nouplinkpid');
 		}
 
+		//copy tree
+		$cmd['pages'][$this->extConf['templPid']]['copy'] = intval($post['ssparentpid']);
 
 
-		// Create Subsite Record
-		$data['tx_subsitewizard_subsites']['NEW0'] = array (
-			'title' => htmlspecialchars($post['sstitle']),
-			'parentpid' => trim(htmlspecialchars($post['ssparentpid'])),
-			'uplinkpid' => trim(htmlspecialchars($post['ssuplinkpid'])),
-			'contact' => htmlspecialchars($post['sscontact']),
-			'contactmail' => htmlspecialchars($post['sscontactmail']),
-			'contactphone' => htmlspecialchars($post['sscontactphone']),
-			'comment' => htmlspecialchars($post['sscomment']),
-			'kostenstelle' => htmlspecialchars($post['sskostenstelle']),
-			'praesenzverantwortlicher' => htmlspecialchars($post['ssverantwortlicher']),
-			'laufzeit' => htmlspecialchars($post['sslaufzeit']),
-			'headerimage' => htmlspecialchars($post['ssheaderimg']),
-		);
 
-		// Create Subsite Startpage
-		$data['pages']['NEW1'] = array (
-			'title' => htmlspecialchars($post['ssptitle']),
-			'pid' => trim(htmlspecialchars($post['ssparentpid'])),
-			'navtitle' => htmlspecialchars($post['ssnavtitle']),
-		);
+
+
+
 
 		if ($errors === 0) {
-			$out .=  t3lib_div::view_array($data);
-			$validated = TRUE;
+			$this->validated = TRUE;
 		} else {
 			$out .= '<div class="sserror">
 			<div class="typo3-message message-error">
@@ -333,40 +343,159 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 			</div>';
 		}
 
-		if ($validated && 1==2) {
+		if ($this->validated) {
 			// Real Data Creation
-			$tce = t3lib_div::makeInstance('t3lib_TCEmain');
-			$tce->stripslashes_values = 0;
-			$tce->reverseOrder = 1;
 
-			// set default TCA values specific for the user
-			$TCAdefaultOverride = $GLOBALS['BE_USER']->getTSConfigProp('TCAdefaults');
-			if (is_array($TCAdefaultOverride)) {
-				$tce->setDefaultsFromUserTS($TCAdefaultOverride);
+			$tce->start(array(), $cmd);
+			$tce->process_cmdmap();
+
+			$createdPages = $tce->copyMappingArray_merged['pages'];
+				//reusable information
+			$pageID = $createdPages[$this->extConf['templPid']];
+			$alias = htmlspecialchars($post['ssnavtitle']);
+
+
+			// Create Subsite Record
+			$data['tx_subsitewizard_subsites']['NEW0'] = array (
+				'pid' => 0,
+				'title' => htmlspecialchars($post['sstitle']),
+				'alias' => $alias,
+				'parentpid' => trim(htmlspecialchars($post['ssparentpid'])),
+				'startpid' => $pageID,
+				'uplinkpid' => trim(htmlspecialchars($post['ssuplinkpid'])),
+				'contact' => htmlspecialchars($post['sscontact']),
+				'contactmail' => htmlspecialchars($post['sscontactmail']),
+				'contactphone' => htmlspecialchars($post['sscontactphone']),
+				'comment' => htmlspecialchars($post['sscomment']),
+				'kostenstelle' => htmlspecialchars($post['sskostenstelle']),
+				'praesenzverantwortlicher' => htmlspecialchars($post['ssverantwortlicher']),
+				'laufzeit' => htmlspecialchars($post['sslaufzeit']),
+				'headerimage' => htmlspecialchars($post['ssheaderimg']),
+			);
+
+				//create folders
+			t3lib_div::mkdir_deep(PATH_site . 'fileadmin/media/' . $alias . ' (media ' . $pageID . ')/');
+			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/public/' . $alias . ' (public ' . $pageID . ')/');
+
+				//create filemounts
+			$data['sys_filemounts']['NEW1'] = array (
+				'pid' => 0,
+				'base' => 1,
+				'title' => $alias . ' (' . $pageID . ')',
+				'path' => $alias,
+			);
+			$data['sys_filemounts']['NEW2'] = array (
+				'pid' => 0,
+				'base' => 1,
+				'title' => $alias . ' (' . $pageID . ')',
+				'path' => 'public/' . $alias,
+			);
+
+				// create beuser group
+			$data['be_groups']['NEW3'] = array(
+				'pid' => 0,
+				'title' => $alias . ' (' . $pageID . ')',
+				'subgroup' => intval($this->extConf['userSubGroup']),
+				'db_mountpoints' => $pageID,
+				'file_mountpoints' =>  'NEW1,NEW2',
+			);
+
+				// add usergroup to beuser
+				//get userrecord
+			$beuser = t3lib_BEfunc::getRecord('be_users', intval($post['firstbeuser']));
+			if (is_array($beuser)) {
+				$data['be_users'][$beuser['uid']] = array(
+					'usergroup' =>  $beuser['usergroup']. ($beuser['usergroup'] ? ',' : '') . 'NEW3',
+				);
 			}
 
-			$data = array ();
+				// Get the mapping
+			$temp = $GLOBALS['BE_USER']->getTSConfig('mod.subsitewizard');
+			$modConf = isset($temp['properties']['pageMapping.']) ? $temp['properties']['pageMapping.'] : array();
 
-			$tce->start($data, array ());
+			$fieldTitle = $modConf['title'] ? $modConf['title'] : 'title';
+			$fieldSubTitle = $modConf['subtitle'] ? $modConf['subtitle'] : 'subtitle';
+			$fieldAlias  = $modConf['alias'] ? $modConf['alias'] : 'navtitle';
+			$fieldMedia  = $modConf['media'] ? $modConf['media'] : 'media';
+			$fieldUplink  = $modConf['uplink'] ? $modConf['uplink'] : 'url';
+			$fieldContact  = $modConf['contact'] ? $modConf['contact'] : 'author';
+			$fieldContactmail  = $modConf['contactmail'] ? $modConf['contactmail'] : 'author_email';
+
+
+			$data['pages'][$pageID] = array (
+				'pid' => trim(htmlspecialchars($post['ssparentpid'])),
+				'hidden' => 0,
+				$fieldTitle => htmlspecialchars($post['ssptitle']),
+				$fieldSubTitle => htmlspecialchars($post['sstitle']),
+				$fieldAlias => $alias,
+				$fieldMedia => $alias,
+				$fieldUplink => $alias,
+				$fieldContact => $alias,
+				$fieldContactmail => $alias,
+
+			);
+
+				// Access
+			foreach ($createdPages as $pageUid) {
+				$data['pages'][$pageUid]['perms_userid'] = $beuser['uid'];
+				$data['pages'][$pageUid]['perms_groupid'] = 'NEW3';
+				$data['pages'][$pageUid]['perms_user'] = 31;
+				$data['pages'][$pageUid]['perms_group'] = 31;
+			}
+			$tce->start($data, array());
 			$tce->process_datamap();
+
+				// adjust unreplaced values
+			$data = array();
+			$newDBGroup = intval($tce->substNEWwithIDs['NEW3']);
+			$data['pages'][$pageID]['TSconfig'] = 'TCEMAIN.permissions.groupid = ' . $newDBGroup;
+
+			$tce->start($data, array());
+			$tce->process_datamap();
+
+				//finished
+			$out =  '<h4>' . $GLOBALS['LANG']->getLL('wizard.created') . '</h4>';
+			$onClick = "top.loadEditId(" . $pageID . ");top.fsMod.recentIds['web']=" . $pageID . ";";
+			$out .= '<p><a href="#" onclick="' . htmlspecialchars($onClick) . '">' . $GLOBALS['LANG']->getLL('wizard.gotopage') . '</a></p>';
+
+				// update Pagetree
+			t3lib_BEfunc::setUpdateSignal('updatePageTree');
 		}
 
 		return $out;
 	}
 
-/**
+	/**
 	 *
 	 */
 	protected function getSubsitesTable() {
-		$tableLayout = array ('table' => array ('<table border="0" cellspacing="1" cellpadding="2" style="width:auto;">', '</table>'), '0' => array ('tr' => array ('<tr class="bgColor2" valign="top">', '</tr>'), 'defCol' => array ('<td class="cell">', '</td>')), 'defRow' => array ('tr' => array ('<tr class="bgColor3-20">', '</tr>'), 'defCol' => array ('<td class="cell">', '</td>')));
+		$tableLayout = array (
+			'table' => array (
+				'<table border="0" cellspacing="1" cellpadding="2" style="width:auto;" id="typo3-filelist">', '</table>'),
+				'0' => array (
+					'tr' => array (
+						'<tr class="c-headLine" valign="top">', '</tr>'
+					),
+					'defCol' => array ('<td class="cell">', '</td>')
+				),
+				'defRowOdd' => array (
+					'tr' => array ('<tr class="bgColor6">', '</tr>'),
+					'defCol' => array ('<td class="cell">', '</td>')
+				),
+				'defRowEven' => array (
+					'tr' => array ('<tr class="bgColor4">', '</tr>'),
+					'defCol' => array ('<td class="cell">', '</td>')
+				),
+
+		);
 		$table = array ();
 		$tr = 0;
 
 		// Header row
-		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.uid');
+		$table[$tr][] = '&nbsp;';
 		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.title');
-		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.parentpid');
-		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.uplinkpid');
+		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.alias');
+		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.pids');
 		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.headerimage');
 		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.contact');
 		$table[$tr][] = $GLOBALS['LANG']->getLL('subsites.comment');
@@ -377,24 +506,58 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 		$subSites = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', 'tx_subsitewizard_subsites', 'deleted=0', '', 'title');
 
 		foreach ($subSites as $subSite) {
-
-
 			$found = is_file($subSite['logfile']);
 			$foundIcon = '<img' . t3lib_iconWorks::skinImg($this->backPath, 'gfx/' . ($found ? 'ok.png' : 'error.png')) . ' title="' . ($found ? $GLOBALS['LANG']->getLL('logfile.filefound') : $GLOBALS['LANG']->getLL('logfile.filenotfound')) . '" />';
+			$params = '&edit[tx_subsitewizard_subsites][' . $subSite['uid'] . ']=edit';
 
-			$table[$tr][] = intval($subSite['uid']);
-			$table[$tr][] = t3lib_BEfunc::getRecordTitle('tx_subsitewizard_subsites', $subSite);
-			$table[$tr][] = htmlspecialchars($subSite['parentpid']);
-			$table[$tr][] = htmlspecialchars($subSite['uplinkpid']);
-			$table[$tr][] = htmlspecialchars($subSite['headerimage']);
-			$table[$tr][] = htmlspecialchars($subSite['contact']) . '<br />' . htmlspecialchars($subSite['contactmail']) . '<br />' . htmlspecialchars($subSite['contactphone']);
-			$table[$tr][] = nl2br(htmlspecialchars($subSite['comment']));
+			$table[$tr][] = '<a href="#" onclick="' . htmlspecialchars(t3lib_BEfunc::editOnClick($params, $this->doc->backPath)) . '">
+				<img' . t3lib_iconWorks::skinImg($this->backPath, 'gfx/edit2.gif') . ' title="' . $GLOBALS['LANG']->getLL('editRecord', 1) . '" alt="" />
+			</a>';
+
+			$table[$tr][] = '<strong>' . t3lib_BEfunc::getRecordTitle('tx_subsitewizard_subsites', $subSite) . '</strong>';
+			$table[$tr][] = '<strong class="alias">' . htmlspecialchars($subSite['alias']) . '</strong>';
+
+			$table[$tr][] = $this->pidCell($subSite['startpid']) .
+				'<br />' .
+				$this->pidCell($subSite['parentpid']) .
+				'<br />' .
+				$this->pidCell($subSite['uplinkpid']);
+
+				$table[$tr][] = htmlspecialchars($subSite['headerimage']);
+			$table[$tr][] = htmlspecialchars($subSite['contact']) . '<br />' .
+				'<a href="mailto:' . $subSite['contactmail'] . '">' . htmlspecialchars($subSite['contactmail']) . '</a><br />' .
+				'<span class="phone">' . htmlspecialchars($subSite['contactphone']) . '</span>';
+
+			$table[$tr][] = '<div title="' . htmlspecialchars($subSite['comment']) . '">' . nl2br(htmlspecialchars(t3lib_div::fixed_lgd_cs($subSite['comment'], 50))) . '</div>';
+
 			$table[$tr][] = htmlspecialchars($subSite['praesenzverantwortlicher']) . '<br />' . htmlspecialchars($subSite['kostenstelle']) . '<br />' . htmlspecialchars($subSite['laufzeit']);
 			$tr ++;
 		}
 
 
 		return $this->doc->table($table, $tableLayout);
+	}
+
+	protected function getConfiguration() {
+		$temp = $GLOBALS['BE_USER']->getTSConfig('mod.subsitewizard');
+		$modConf = isset($temp['properties']) ? $temp['properties'] : array();
+		return t3lib_div::view_array(array_merge($this->extConf, $modConf));
+	}
+
+	protected function pidCell($pid) {
+
+		$pageRecord = t3lib_BEfunc::getRecord('pages', intval($pid));
+		if (!is_array($pageRecord)) {
+			return '';
+		}
+		$view = $this->doc->viewPageIcon($pid, $this->doc->backPath);
+		$alttext = t3lib_BEfunc::getRecordIconAltText($pageRecord, 'pages');
+		$iconImg = t3lib_iconWorks::getIconImage('pages', $pageRecord, $this->backPath, 'title="'. htmlspecialchars($alttext) . '"');
+			// Make Icon:
+		$theIcon = $this->doc->wrapClickMenuOnIcon($iconImg, 'pages', $pageRecord['uid']);
+		$title = t3lib_BEfunc::getRecordTitle('pages', $pageRecord);
+		$pageInfo = $view . $theIcon . $title . ' <em>[pid: ' . $pid . ']</em>';
+		return $pageInfo;
 	}
 
 

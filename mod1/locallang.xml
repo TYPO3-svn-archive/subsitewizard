@@ -9,8 +9,9 @@
 			<label index="headertitle">Subsitewizard of TU Ilmenau</label>
 			<label index="title">Subsitewizard</label>
 			<label index="ssnew">New Subsite</label>
-			<label index="function1">Create a Subsite</label>
-			<label index="function2">Show Subsite Informations</label>
+			<label index="menu_create">Create a Subsite</label>
+			<label index="menu_list">Show Subsite Informations</label>
+			<label index="menu_conf">Show Configuration</label>
 			<label index="sstitle">Subsite Title</label>
 			<label index="pagetitle">Page Title</label>
 			<label index="navtitle">Navigation Title</label>
@@ -34,15 +35,22 @@
 			<label index="subsites.parentpid">Parent PID</label>
 			<label index="subsites.uplinkpid">Uplink PID</label>
 			<label index="subsites.headerimage">Headerimage</label>
-			<label index="subsites.contact">Contact</label>
+			<label index="subsites.contact">Contact&lt;br /&gt;Email&lt;br /&gt;Phone</label>
 			<label index="subsites.comment">Comment</label>
-			<label index="subsites.info">Info</label>
+			<label index="subsites.info">Leader&lt;br /&gt;Account&lt;br /&gt;Runtime</label>
+			<label index="subsites.pids">Start PID&lt;br /&gt;Parent PID&lt;br /&gt;Uplink PID</label>
+			<label index="subsites.alias">Alias</label>
 			<label index="errors.submiterror">ERROR: Data not complete!</label>
 			<label index="errors.notitle">Please fill out Title</label>
 			<label index="errors.nopagetitle">Please fill out Pagetitle</label>
 			<label index="errors.nonavtitle">Please fill out Navigation Title</label>
 			<label index="errors.noparentpid">Please fill out Parent PID</label>
 			<label index="errors.nouplinkpid">Please fill out Uplink PID</label>
+			<label index="wizard.created">Subsite was created.</label>
+			<label index="wizard.gotopage">Jump to Startpage of new subsite</label>
+			<label index="editRecord">Edit this record</label>
+			<label index="subsites">Subsites:</label>
+			<label index="configuration">Configuration:</label>
 		</languageKey>
 		<languageKey index="de" type="array">
 			<label index="headertitle">Subsitewizard der TU Ilmenau</label>
@@ -82,6 +90,10 @@
 			<label index="errors.nonavtitle">Bitte den Navigationtitel aufüllen.</label>
 			<label index="errors.noparentpid">Bitte den Elternseiten-PID aufüllen.</label>
 			<label index="errors.nouplinkpid">Bitte den Uplink-PID aufüllen.</label>
+			<label index="wizard.created">Subsite wurde erstellt.</label>
+			<label index="wizard.gotopage">Springe zur Startseite der neuen Präsenz</label>
+			<label index="subsites">Subsites:</label>
+			<label index="configuration">Konfiguration:</label>
 		</languageKey>
 	</data>
 </T3locallang>

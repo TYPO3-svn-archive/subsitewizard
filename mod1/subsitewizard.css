@@ -1,0 +1,28 @@
+.subsitewizard label {
+	float:left; width: 120px;
+}
+.subsitewizard p {
+	clear: left;
+	padding: 4px 10px;
+}
+.ssheadertitle {
+	color: white; 
+	text-weight: bold; 
+	font-size: 12px;
+	padding: 2px 6px;
+}
+
+sserrors {
+	
+}
+strong.alias { 
+	color:green;
+}
+
+td a {
+	text-decoration: underline;
+	
+}
+span.phone {
+	color: maroon;
+}

@@ -9,15 +9,31 @@
 			<label index="tx_subsitewizard_subsites">Subsites</label>
 			<label index="tx_subsitewizard_subsites.title">title</label>
 			<label index="tx_subsitewizard_subsites.parentpid">parentPID</label>
-			<label index="tx_subsitewizard_subsites.uplinkpid">uplinkPID</label>
-			<label index="tx_subsitewizard_subsites.headerimage">headerimage</label>
-			<label index="tx_subsitewizard_subsites.contact">contact</label>
-			<label index="tx_subsitewizard_subsites.contactmail">contactmail</label>
-			<label index="tx_subsitewizard_subsites.contactphone">contactphone</label>
-			<label index="tx_subsitewizard_subsites.comment">comment</label>
-			<label index="tx_subsitewizard_subsites.kostenstelle">kostenstelle</label>
-			<label index="tx_subsitewizard_subsites.praesenzverantwortlicher">praesenzverantwortlicher</label>
-			<label index="tx_subsitewizard_subsites.laufzeit">laufzeit</label>
+			<label index="tx_subsitewizard_subsites.startpid">Startpage PID</label>
+			<label index="tx_subsitewizard_subsites.uplinkpid">UplinkPID</label>
+			<label index="tx_subsitewizard_subsites.headerimage">Headerimage</label>
+			<label index="tx_subsitewizard_subsites.contact">Contact</label>
+			<label index="tx_subsitewizard_subsites.contactmail">Contactmail</label>
+			<label index="tx_subsitewizard_subsites.contactphone">Contactphone</label>
+			<label index="tx_subsitewizard_subsites.comment">Comment</label>
+			<label index="tx_subsitewizard_subsites.kostenstelle">Account</label>
+			<label index="tx_subsitewizard_subsites.praesenzverantwortlicher">Praesenzverantwortlicher</label>
+			<label index="tx_subsitewizard_subsites.laufzeit">Laufzeit</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="tx_subsitewizard_subsites">Subsites</label>
+			<label index="tx_subsitewizard_subsites.title">Titel</label>
+			<label index="tx_subsitewizard_subsites.parentpid">Elternseite PID</label>
+			<label index="tx_subsitewizard_subsites.startpid">Startseite PID</label>
+			<label index="tx_subsitewizard_subsites.uplinkpid">Uplinkseite PID</label>
+			<label index="tx_subsitewizard_subsites.headerimage">Headerbild</label>
+			<label index="tx_subsitewizard_subsites.contact">Kontakt</label>
+			<label index="tx_subsitewizard_subsites.contactmail">Kontakt E-mail</label>
+			<label index="tx_subsitewizard_subsites.contactphone">Kontakt Telefon</label>
+			<label index="tx_subsitewizard_subsites.comment">Kommentar</label>
+			<label index="tx_subsitewizard_subsites.kostenstelle">Kostenstelle</label>
+			<label index="tx_subsitewizard_subsites.praesenzverantwortlicher">Praesenzverantwortlicher</label>
+			<label index="tx_subsitewizard_subsites.laufzeit">Laufzeit</label>
 		</languageKey>
 	</data>
 </T3locallang>

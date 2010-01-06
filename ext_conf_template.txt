@@ -1,3 +1,6 @@
 
   # cat=basic//10; type=int; label= Vorlagenbaum (PID)
 templPid = 
+
+  # cat=basic//20; type=int; label= BE Subgruppe fuer neue Praesenz (UID)
+userSubGroup = 
