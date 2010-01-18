@@ -376,20 +376,27 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				//create folders
 			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/media/' . $alias . '/');
 			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/public/' . $alias . '/');
+                        t3lib_div::mkdir_deep(PATH_site, 'fileadmin/secure/' . $alias . '/');
 
 				//create filemounts
 			$data['sys_filemounts']['NEW1'] = array (
 				'pid' => 0,
 				'base' => 1,
-				'title' => 'media/' . $alias . ' (media ' . $pageID . ')',
+				'title' => $alias . ' (media ' . $pageID . ')',
 				'path' => 'media/' . $alias,
 			);
 			$data['sys_filemounts']['NEW2'] = array (
 				'pid' => 0,
 				'base' => 1,
-				'title' => 'public/' . $alias . ' (public ' . $pageID . ')',
+				'title' => $alias . ' (public ' . $pageID . ')',
 				'path' => 'public/' . $alias,
 			);
+                        $data['sys_filemounts']['NEW4'] = array (
+                                'pid' => 0,
+                                'base' => 1,
+                                'title' => $alias . ' (secure ' . $pageID . ')',
+                                'path' => 'secure/' . $alias,
+                        );
 
 				// create beuser group
 			$data['be_groups']['NEW3'] = array(
@@ -397,7 +404,7 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				'title' => $alias . ' (' . $pageID . ')',
 				'subgroup' => intval($this->extConf['userSubGroup']),
 				'db_mountpoints' => $pageID,
-				'file_mountpoints' =>  'NEW1,NEW2',
+				'file_mountpoints' =>  'NEW1,NEW2,NEW4',
 			);
 
 				// add usergroup to beuser
