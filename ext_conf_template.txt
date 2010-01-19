@@ -4,3 +4,6 @@ templPid =
 
   # cat=basic//20; type=int; label= BE Subgruppe fuer neue Praesenz (UID)
 userSubGroup = 
+
+  # cat=basic//20; type=boolean; label= Benutze ACL (be_acl muss installiert sein)
+useACL = 

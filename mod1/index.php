@@ -376,7 +376,7 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				//create folders
 			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/media/' . $alias . '/');
 			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/public/' . $alias . '/');
-                        t3lib_div::mkdir_deep(PATH_site, 'fileadmin/secure/' . $alias . '/');
+			t3lib_div::mkdir_deep(PATH_site, 'fileadmin/secure/' . $alias . '/');
 
 				//create filemounts
 			$data['sys_filemounts']['NEW1'] = array (
@@ -391,12 +391,12 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				'title' => $alias . ' (public ' . $pageID . ')',
 				'path' => 'public/' . $alias,
 			);
-                        $data['sys_filemounts']['NEW4'] = array (
-                                'pid' => 0,
-                                'base' => 1,
-                                'title' => $alias . ' (secure ' . $pageID . ')',
-                                'path' => 'secure/' . $alias,
-                        );
+			$data['sys_filemounts']['NEW4'] = array (
+				'pid' => 0,
+				'base' => 1,
+				'title' => $alias . ' (secure ' . $pageID . ')',
+				'path' => 'secure/' . $alias,
+			);
 
 				// create beuser group
 			$data['be_groups']['NEW3'] = array(
@@ -446,6 +446,7 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 			$data = array();
 			$newDBGroup = intval($tce->substNEWwithIDs['NEW3']);
 			$data['pages'][$pageID]['TSconfig'] = 'TCEMAIN.permissions.groupid = ' . $newDBGroup;
+
 				// Access
 			foreach ($createdPages as $pageUid) {
 				$data['pages'][$pageUid]['perms_userid'] = $beuser['uid'];
@@ -454,6 +455,15 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				$data['pages'][$pageUid]['perms_group'] = 31;
 			}
 
+			if ($this->extConf['useACL']) {
+				$data['tx_beacl_acl']['NEW4'] = array(
+					'pid' >= $pageID,
+					'permissions' => 31,
+					'recursive' => 1,
+					'object_id' => $newDBGroup,
+					'type' => 1
+				);
+			}
 			$tce->start($data, array());
 			$tce->process_datamap();
 
