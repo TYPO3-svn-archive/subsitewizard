@@ -385,13 +385,13 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				'title' => $alias . ' (media ' . $pageID . ')',
 				'path' => 'media/' . $alias,
 			);
-			$data['sys_filemounts']['NEW2'] = array (
+/*			$data['sys_filemounts']['NEW2'] = array (
 				'pid' => 0,
 				'base' => 1,
 				'title' => $alias . ' (public ' . $pageID . ')',
 				'path' => 'public/' . $alias,
 			);
-			$data['sys_filemounts']['NEW4'] = array (
+*/			$data['sys_filemounts']['NEW2'] = array (
 				'pid' => 0,
 				'base' => 1,
 				'title' => $alias . ' (secure ' . $pageID . ')',
@@ -404,7 +404,7 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				'title' => $alias . ' (' . $pageID . ')',
 				'subgroup' => intval($this->extConf['userSubGroup']),
 				'db_mountpoints' => $pageID,
-				'file_mountpoints' =>  'NEW1,NEW2,NEW4',
+				'file_mountpoints' =>  'NEW1,NEW2',
 			);
 
 				// add usergroup to beuser
@@ -445,14 +445,16 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 				// adjust unreplaced values
 			$data = array();
 			$newDBGroup = intval($tce->substNEWwithIDs['NEW3']);
-			$data['pages'][$pageID]['TSconfig'] = 'TCEMAIN.permissions.groupid = ' . $newDBGroup;
 
 				// Access
-			foreach ($createdPages as $pageUid) {
-				$data['pages'][$pageUid]['perms_userid'] = $beuser['uid'];
-				$data['pages'][$pageUid]['perms_groupid'] = $newDBGroup;
-				$data['pages'][$pageUid]['perms_user'] = 31;
-				$data['pages'][$pageUid]['perms_group'] = 31;
+			if (!$this->extConf['useACL']) {
+	                        $data['pages'][$pageID]['TSconfig'] = 'TCEMAIN.permissions.groupid = ' . $newDBGroup;
+				foreach ($createdPages as $pageUid) {
+					$data['pages'][$pageUid]['perms_userid'] = $beuser['uid'];
+					$data['pages'][$pageUid]['perms_groupid'] = $newDBGroup;
+					$data['pages'][$pageUid]['perms_user'] = 31;
+					$data['pages'][$pageUid]['perms_group'] = 31;
+				}
 			}
 
 			if ($this->extConf['useACL']) {
