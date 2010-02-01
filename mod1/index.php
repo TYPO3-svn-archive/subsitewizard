@@ -448,7 +448,7 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 
 				// Access
 			if (!$this->extConf['useACL']) {
-	                        $data['pages'][$pageID]['TSconfig'] = 'TCEMAIN.permissions.groupid = ' . $newDBGroup;
+				$data['pages'][$pageID]['TSconfig'] = 'TCEMAIN.permissions.groupid = ' . $newDBGroup;
 				foreach ($createdPages as $pageUid) {
 					$data['pages'][$pageUid]['perms_userid'] = $beuser['uid'];
 					$data['pages'][$pageUid]['perms_groupid'] = $newDBGroup;
@@ -459,13 +459,13 @@ class tx_subsitewizard_module1 extends t3lib_SCbase {
 
 			if ($this->extConf['useACL']) {
 				$data['tx_beacl_acl']['NEW4'] = array(
-					'pid' >= $pageID,
+					'pid' => $pageID,
 					'permissions' => 31,
 					'recursive' => 1,
 					'object_id' => $newDBGroup,
 					'type' => 1
 				);
-			}
+			}debug($data);
 			$tce->start($data, array());
 			$tce->process_datamap();
 
